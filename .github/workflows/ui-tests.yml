@@ -1,4 +1,5 @@
-name: UI Tests
+
+name: UI Tests - playwright
 
 on:
   push:
@@ -34,3 +35,4 @@ jobs:
           cd ui-tests
           npx playwright test
 
+# fixed workflow configuration
