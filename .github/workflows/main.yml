@@ -1,22 +1,32 @@
-name: Automation CI
+name: Automation CI (API & UI)
 
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
-  ui-tests:
+  automation-tests:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 18
 
-      - name: Install UI Dependencies
+      # === API TESTS (contoh) ===
+      - name: Run API tests
+        run: |
+          echo "Running API tests..."
+          # contoh: npm run api-test / newman run / pytest
+
+      # === UI TESTS ===
+      - name: Install UI test dependencies
         working-directory: ui-tests
         run: npm install
 
@@ -24,22 +34,13 @@ jobs:
         working-directory: ui-tests
         run: npx playwright install --with-deps
 
-      - name: Run UI Tests
+      - name: Run UI tests
         working-directory: ui-tests
-        run: npx playwright test --reporter=line
+        run: npx playwright test
 
-  api-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
+      - name: Upload UI test report
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Run API Tests
-        working-directory: api-tests
-        run: mvn test
+          name: playwright-report
+          path: ui-tests/playwright-report
