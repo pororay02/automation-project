@@ -1,0 +1,36 @@
+name: UI Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  ui-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd ui-tests
+          npm install
+
+      - name: Install Playwright Browsers
+        run: |
+          cd ui-tests
+          npx playwright install --with-deps
+
+      - name: Run UI Tests
+        run: |
+          cd ui-tests
+          npx playwright test
+
